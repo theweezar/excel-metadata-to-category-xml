@@ -5,10 +5,12 @@ const fs = require('fs');
 const excelToJson = require('convert-excel-to-json');
 const xml2js = require('xml2js');
 
+// Set attribute key name
 const configParse = {
     attrkey: 'attribute'
 };
 
+// Set attribute key name
 const configBuild = {
     attrkey: 'attribute'
 };
@@ -31,7 +33,7 @@ const processCatalog = function (xmlObj) {
     console.log(category);
 
     jsToXmlFile(
-        'result.xml',
+        path.join('result-xml', 'result.xml'),
         xmlObj,
         () => {
             console.log('Done');
@@ -47,12 +49,36 @@ const afterParsingXML = function (error, result) {
     }
 }
 
-const buildMetaDataObject = function () {
-
+const buildMetaDataObject = function (row) {
+    var title = row.C;
+    var desc = row.D;
+    var keyword = row.E;
+    return {
+        categoryId: row.B,
+        xmlString: `
+        <page-attributes>
+            <page-title xml:lang="x-default">${title}</page-title>
+            <page-description xml:lang="x-default">${desc}</page-description>
+            <page-keywords xml:lang="x-default">${keyword}</page-keywords>
+            <page-url xml:lang="x-default">luggage</page-url>
+        </page-attributes>
+        `
+    };
 }
 
 const processXLSX = function (xlsxObject) {
+    var metaTags = xlsxObject['Meta Tags'];
+    var metaDataObjectList = [];
+    // console.log(metaTags);
 
+    metaTags.forEach(row => {
+        if (typeof row === 'object' && Object.keys(row).length === 5) {
+            var metaDataObject = buildMetaDataObject(row);
+            metaDataObjectList.push(metaDataObject);
+        }
+    });
+
+    console.log(metaDataObjectList);
 }
 
 const main = function () {
@@ -62,12 +88,11 @@ const main = function () {
 
     processXLSX(xlsxObject)
 
-    // Set attribute key name
-    const parser = new xml2js.Parser(configParse);
+    // const parser = new xml2js.Parser(configParse);
 
-    const xmlString = fs.readFileSync(path.join(__dirname, 'raw-xml', '20220429_catalog_kr-americantourister.xml'), "utf8");
+    // const xmlString = fs.readFileSync(path.join(__dirname, 'raw-xml', '20220429_catalog_kr-americantourister.xml'), "utf8");
 
-    parser.parseString(xmlString, afterParsingXML);
+    // parser.parseString(xmlString, afterParsingXML);
 }
 
 main();
