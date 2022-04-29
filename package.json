@@ -1,0 +1,15 @@
+{
+  "name": "excel-metadata-tag-to-xml",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Duc Hoang | Dan",
+  "license": "ISC",
+  "dependencies": {
+    "convert-excel-to-json": "^1.7.0",
+    "xml2js": "^0.4.23"
+  }
+}
